@@ -1,6 +1,6 @@
 package 集合和映射;
 
-interface Map<K,V> {
+public interface Map<K,V> {
     void add(K key, V value);
     void remove(K key);
     V get(K key);

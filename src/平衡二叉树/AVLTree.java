@@ -275,7 +275,14 @@ public class AVLTree<K extends Comparable<K>,V>{
         queue.add(root);
         while(!queue.isEmpty()){
             Node currentNode = queue.remove();
-            System.out.println(currentNode.key+" "+currentNode.value);
+            /**
+             * 如果是集合
+             */
+            System.out.println(currentNode.key);
+            /**
+             * 如果是映射
+             */
+            //System.out.println(currentNode.key+" "+currentNode.value);
             if(currentNode.left!=null){
                 queue.add(currentNode.left);
             }
