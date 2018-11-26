@@ -1,4 +1,5 @@
 package 平衡二叉树;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -65,9 +66,60 @@ public class AVLTree<K extends Comparable<K>,V>{
         if(Math.abs(balanceFactor) > 1){
             System.out.println("unbalanced"+ balanceFactor);
         }
+        //LL平衡的维护,左侧的左侧添加了节点，进行右旋转
+        if(balanceFactor > 1 && getBalanceFactor(rootNode.left)>=0){
+            return rightRotate(rootNode);
+        }
+        //RR左旋转
+        if(balanceFactor<-1 && getBalanceFactor(rootNode.right)<=0){
+            return leftRotate(rootNode);
+        }
+        //LR
+        if(balanceFactor > 1 && getBalanceFactor(rootNode.left)<0){
+            rootNode.left = leftRotate(rootNode.left);
+            return rightRotate(rootNode);
+        }
+        //RL
+        if(balanceFactor < -1 && getBalanceFactor(rootNode.right)>0){
+            rootNode.right = rightRotate(rootNode.right);
+            return leftRotate(rootNode);
+        }
         return rootNode;
     }
 
+    /**
+     * 右旋转
+     * @param y
+     * @return
+     */
+    private Node rightRotate(Node y){
+        Node x = y.left;
+        Node t3 = x.right;
+        //向右旋转过程
+        x.right = y;
+        y.left = t3;
+        //更新height值
+        y.height  = Math.max(getHeight(y.left),getHeight(y.right)) + 1;
+        x.height = Math.max(getHeight(x.left), getHeight(x.right)) + 1;
+        return x;
+    }
+
+    /**
+     * 左旋转
+     * @param y
+     * @return
+     */
+    private Node leftRotate(Node y){
+        Node x = y.right;
+        Node t2 = x.left;
+        //向左旋转过程
+        x.left = y;
+        y.right = t2;
+        //更新height值
+        y.height  = Math.max(getHeight(y.left),getHeight(y.right)) + 1;
+        x.height = Math.max(getHeight(x.left), getHeight(x.right)) + 1;
+        return x;
+    }
     /**
      * 删除二分搜索树中的某个节点
      * @param key
@@ -213,6 +265,56 @@ public class AVLTree<K extends Comparable<K>,V>{
             return 0;
         }
         return getHeight(node.left) - getHeight(node.right);
+    }
+
+    /**
+     * 判断当前的树是不是二分搜索树
+     * 使用中序遍历时，所有元素都是顺序的
+     * @return
+     */
+    public boolean isBST(){
+        ArrayList<K> arrayList = new ArrayList<>();
+        inOrderTraversal(root,arrayList);
+        for (int i = 1; i < arrayList.size(); i++) {
+            if(arrayList.get(i-1).compareTo(arrayList.get(i))> 0){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 判断当前的树是不是平衡树
+     * @return
+     */
+    public boolean isBalanced(){
+        return isBalanced(root);
+    }
+
+    private boolean isBalanced(Node node){
+        if(node == null){
+            return true;
+        }
+        int balanceFactor = getBalanceFactor(node);
+        if(Math.abs(balanceFactor)>1){
+            return false;
+        }
+        return isBalanced(node.left) && isBalanced(node.right);
+
+    }
+    /**
+     * 中序遍历
+     * @param node
+     * @param arrayList
+     */
+    private void inOrderTraversal(Node node,ArrayList<K> arrayList){
+        if(node == null){
+            return;
+        }
+        inOrderTraversal(node.left,arrayList);
+        arrayList.add(node.key);
+        inOrderTraversal(node.right,arrayList);
+
     }
 }
 
