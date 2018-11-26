@@ -131,33 +131,75 @@ public class AVLTree<K extends Comparable<K>,V>{
         }
 
     }
+    /**
+     * 删除AVL中的节点
+     * @param node
+     * @param key
+     * @return
+     */
     private Node deleteAnyNode(Node node,K key){
         if(node == null){
             return null;
         }
+        //最后返回的节点
+        Node returnNode;
         if(key.compareTo(node.key)<0){
             node.left = deleteAnyNode(node.left,key);
-            return node;
+            returnNode = node;
         }else if(key.compareTo(node.key)>0){
             node.right = deleteAnyNode(node.right,key);
+            returnNode = node;
         }else {
+            //如果待删除的节点左子树为空的情况
             if(node.left == null){
                 Node rightNode = node.right;
                 node.right = null;
-                return rightNode;
+                returnNode = rightNode;
             }
-            if(node.right==null){
+            //如果待删除的节点右子树为空的情况
+            else if(node.right==null){
                 Node leftNode = node.left;
                 node.left = null;
-                return leftNode;
+                returnNode = leftNode;
+            }else {
+                //待删除的节点左右子树均不为空的情况
+                Node successor = minValue(node.right);
+                successor.right = deleteAnyNode(node.right, successor.key);
+                successor.left = node.left;
+                node.right = node.left = null;
+                returnNode = successor;
             }
-            Node successor = minValue(node.right);
-            successor.right = removeMin(node.right);
-            successor.left = node.left;
-            node.right = node.left = null;
-            return successor;
         }
-        return node;
+        //如果节点是叶子节点
+        if(returnNode == null){
+            return null;
+        }
+
+        //更新当前节点的height值,更新的值是当前左右节点的最大值
+        returnNode.height = 1 + Math.max(getHeight(returnNode.left),getHeight(returnNode.right));
+        int balanceFactor = getBalanceFactor(returnNode);
+        if(Math.abs(balanceFactor) > 1){
+            System.out.println("unbalanced"+ balanceFactor);
+        }
+        //LL平衡的维护,左侧的左侧添加了节点，进行右旋转
+        if(balanceFactor > 1 && getBalanceFactor(returnNode.left)>=0){
+            return rightRotate(returnNode);
+        }
+        //RR左旋转
+        if(balanceFactor<-1 && getBalanceFactor(returnNode.right)<=0){
+            return leftRotate(returnNode);
+        }
+        //LR
+        if(balanceFactor > 1 && getBalanceFactor(returnNode.left)<0){
+            returnNode.left = leftRotate(returnNode.left);
+            return rightRotate(returnNode);
+        }
+        //RL
+        if(balanceFactor < -1 && getBalanceFactor(returnNode.right)>0){
+            returnNode.right = rightRotate(returnNode.right);
+            return leftRotate(returnNode);
+        }
+        return returnNode;
     }
 
     /**
