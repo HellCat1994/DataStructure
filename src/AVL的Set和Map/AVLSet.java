@@ -5,7 +5,6 @@ import 集合和映射.Set;
 
 public class AVLSet<T extends Comparable<T>> implements Set<T> {
     private AVLTree<T,Object> avlTree;
-
     public AVLSet() {
         avlTree = new AVLTree<>();
     }
@@ -14,7 +13,6 @@ public class AVLSet<T extends Comparable<T>> implements Set<T> {
     public void add(T e) {
         avlTree.add(e,null);
     }
-
     @Override
     public void remove(T e) {
         avlTree.remove(e);
