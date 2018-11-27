@@ -11,9 +11,6 @@ public class RedBlackTree<K extends Comparable<K>,V>{
         public Node left;
         public Node right;
         public boolean color;
-        /**
-         * 记录节点的高度值
-         */
         public Node(K key,V value){
             this.key = key;
             this.value = value;
@@ -145,14 +142,6 @@ public class RedBlackTree<K extends Comparable<K>,V>{
             }
         }
     }
-
-
-
-
-
-
-
-
 }
 
 
